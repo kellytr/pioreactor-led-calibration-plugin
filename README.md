@@ -8,7 +8,7 @@ This plugin offers the ability to calibrate your LEDs using an external light pr
 Install from the command line. 
 
 ```
-pio install-plugin led_calibration_plugin
+pio install-plugin led-calibration-plugin
 ```
 
 Then run by typing into your command line: 
