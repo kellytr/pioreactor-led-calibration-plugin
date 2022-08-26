@@ -3,11 +3,9 @@ from __future__ import annotations
 
 import click
 from msgspec.json import encode
-
 from pioreactor import structs
 from pioreactor import types as pt
 from pioreactor.actions.led_intensity import led_intensity
-from pioreactor.config import config
 from pioreactor.pubsub import publish
 from pioreactor.utils import is_pio_job_running
 from pioreactor.utils import local_persistant_storage
@@ -31,16 +29,18 @@ class LEDCalibration(structs.Calibration):
     led_intensities: list[float]
     channel: pt.LedChannel
 
+
 def introduction():
     click.clear()
     click.echo(
         """This routine will calibrate the LEDs on your current Pioreactor using an external lightprobe. You'll need:
     1. A Pioreactor
     2. At least 10mL of your media
-    3. A sperical light probe (type of photometer) 
+    3. A sperical light probe (type of photometer)
 """
     )
-    
+
+
 def get_metadata_from_user():
     with local_persistant_storage("led_calibrations") as cache:
         while True:
@@ -51,27 +51,28 @@ def get_metadata_from_user():
                 if click.confirm("❗️ Name already exists. Do you wish to overwrite?"):
                     break
 
-    channel = click.prompt("Which channel is being used?", type=click.Choice(["A", "B", "C", "D"])
-    )
-    
+    channel = click.prompt("Which channel is being used?", type=click.Choice(["A", "B", "C", "D"]))
+
     click.confirm(
         f"Confirm using channel {channel} with X2 or X3 pocket positions in the Pioreactor",
         abort=True,
         default=True,
     )
-    
+
     return name, channel
-    
+
+
 def setup_probe_instructions():
     click.clear()
     click.echo(
         """ Setting up:
-    1. Add 10ml of your media into the glass vial. 
+    1. Add 10ml of your media into the glass vial.
     2. Place into Pioreactor.
     3. Hold your light probe in place within the vial, submerged in your media.
 """
     )
-    
+
+
 def plot_data(
     x, y, title, x_min=None, x_max=None, interpolation_curve=None, highlight_recent_point=True
 ):
@@ -93,13 +94,14 @@ def plot_data(
     plt.xlim(x_min, x_max)
     plt.show()
 
-def start_recording(channel, min_intensity, max_intensity): 
+
+def start_recording(channel, min_intensity, max_intensity):
     led_intensity(
         desired_state={"A": 0, "B": 0, "C": 0, "D": 0},
         unit=get_unit_name(),
         experiment=get_latest_testing_experiment_name(),
-        verbose=False
-        )
+        verbose=False,
+    )
 
     lightprobe_readings: list[float] = []
     led_intensities_to_test = [
@@ -108,7 +110,7 @@ def start_recording(channel, min_intensity, max_intensity):
         min_intensity * 10,
         min_intensity * 15,
     ] + [max_intensity * 0.85, max_intensity * 0.90, max_intensity * 0.95, max_intensity]
-    
+
     for i, intensity in enumerate(led_intensities_to_test):
         if i != 0:
             plot_data(
@@ -121,25 +123,26 @@ def start_recording(channel, min_intensity, max_intensity):
 
         click.echo(click.style(f"Changing the LED intensity to {intensity}%", fg="green"))
         click.echo("Record the light intensity reading from your light probe.")
-        
+
         led_intensity(
             desired_state={channel: intensity},
             unit=get_unit_name(),
             experiment=get_latest_testing_experiment_name(),
-            )
+        )
 
         r = click.prompt(
             click.style("Enter reading on light probe", fg="green"),
-            confirmation_prompt=click.style("Repeat for confirmation", fg="green"), type=float
+            confirmation_prompt=click.style("Repeat for confirmation", fg="green"),
+            type=float,
         )
 
         lightprobe_readings.append(r)
         click.clear()
         click.echo()
-                
+
     return lightprobe_readings, led_intensities_to_test
-        
-    
+
+
 def calculate_curve_of_best_fit(lightprobe_readings, led_intensities, degree):
     import numpy as np
 
@@ -150,8 +153,8 @@ def calculate_curve_of_best_fit(lightprobe_readings, led_intensities, degree):
         coefs = np.zeros(degree)
 
     return coefs, "poly"
-    
-    
+
+
 def show_results_and_confirm_with_user(curve, curve_type, lightprobe_readings, led_intensities):
     click.clear()
 
@@ -171,8 +174,9 @@ def show_results_and_confirm_with_user(curve, curve_type, lightprobe_readings, l
         interpolation_curve=curve_callable,
         highlight_recent_point=False,
     )
-    
+
     click.confirm("Confirm and save to disk?", abort=True, default=True)
+
 
 def save_results_locally(
     curve_data_: list[float],
@@ -210,8 +214,7 @@ def save_results_locally(
     return data_blob
 
 
-## general schematic of what's gonna happen 
-
+## general schematic of what's gonna happen
 def led_calibration(min_intensity, max_intensity):
     unit = get_unit_name()
     experiment = get_latest_testing_experiment_name()
@@ -225,8 +228,10 @@ def led_calibration(min_intensity, max_intensity):
         name, channel = get_metadata_from_user()
         setup_probe_instructions()
 
-        # retrieve readings from the light probe and list of led intensities 
-        lightprobe_readings, led_intensities = start_recording(channel, min_intensity, max_intensity)
+        # retrieve readings from the light probe and list of led intensities
+        lightprobe_readings, led_intensities = start_recording(
+            channel, min_intensity, max_intensity
+        )
 
         curve, curve_type = calculate_curve_of_best_fit(lightprobe_readings, led_intensities, 1)
         show_results_and_confirm_with_user(curve, curve_type, lightprobe_readings, led_intensities)
@@ -247,8 +252,7 @@ def led_calibration(min_intensity, max_intensity):
         return
 
 
-### This part displays the current led calibration 
-
+### This part displays the current led calibration
 @click.command(name="led_calibration")
 @click.option("--min-intensity", type=float)
 @click.option("--max-intensity", type=float)
@@ -264,6 +268,7 @@ def click_led_calibration(min_intensity, max_intensity):
         raise ValueError("min_intensity and max_intensity must both be set.")
 
     led_calibration(min_intensity, max_intensity)
+
 
 if __name__ == "__main__":
     click_led_calibration()
