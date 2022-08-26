@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
-from time import sleep
-
 import click
-from msgspec.json import decode
 from msgspec.json import encode
 
 from pioreactor import structs
@@ -18,7 +15,6 @@ from pioreactor.utils import publish_ready_to_disconnected_state
 from pioreactor.utils.timing import current_utc_timestamp
 from pioreactor.whoami import get_latest_testing_experiment_name
 from pioreactor.whoami import get_unit_name
-from pioreactor.whoami import is_testing_env
 from pioreactor.whoami import UNIVERSAL_EXPERIMENT
 
 
@@ -66,7 +62,7 @@ def get_metadata_from_user():
     
     return name, channel
     
-def setup_HDC_instructions():
+def setup_probe_instructions():
     click.clear()
     click.echo(
         """ Setting up:
@@ -114,43 +110,33 @@ def start_recording(channel, min_intensity, max_intensity):
     ] + [max_intensity * 0.85, max_intensity * 0.90, max_intensity * 0.95, max_intensity]
     
     for i, intensity in enumerate(led_intensities_to_test):
-        while True:
-            if i != 0:
-                plot_data(
-                    led_intensities_to_test[:i],
-                    lightprobe_readings,
-                    title="LED Calibration (ongoing)",
-                    x_min=min_intensity,
-                    x_max=max_intensity,
-                )
-
-            click.echo(click.style(f"Changing the LED intensity to {intensity}%", fg="green"))
-            click.echo("Record the light intensity reading from your light probe.")
-            
-            led_intensity(
-                desired_state={channel: intensity},
-                unit=get_unit_name(),
-                experiment=get_latest_testing_experiment_name(),
-                )
-
-            r = click.prompt(
-                click.style("Enter reading on light probe", fg="green"),
-                confirmation_prompt=click.style("Repeat for confirmation", fg="green"), type=float
+        if i != 0:
+            plot_data(
+                led_intensities_to_test[:i],
+                lightprobe_readings,
+                title="LED Calibration (ongoing)",
+                x_min=min_intensity,
+                x_max=max_intensity,
             )
-            if r == "REDO":
-                    click.clear()
-                    click.echo()
-                    continue
 
-            try:
-                lightprobe_readings.append(float(r))
+        click.echo(click.style(f"Changing the LED intensity to {intensity}%", fg="green"))
+        click.echo("Record the light intensity reading from your light probe.")
+        
+        led_intensity(
+            desired_state={channel: intensity},
+            unit=get_unit_name(),
+            experiment=get_latest_testing_experiment_name(),
+            )
+
+        r = click.prompt(
+            click.style("Enter reading on light probe", fg="green"),
+            confirmation_prompt=click.style("Repeat for confirmation", fg="green"), type=float
+        )
+
+        lightprobe_readings.append(r)
+        click.clear()
+        click.echo()
                 
-                click.clear()
-                click.echo()
-                break
-            except ValueError:
-                click.echo("Not a number - retrying.")
-                    
     return lightprobe_readings, led_intensities_to_test
         
     
@@ -186,18 +172,7 @@ def show_results_and_confirm_with_user(curve, curve_type, lightprobe_readings, l
         highlight_recent_point=False,
     )
     
-    r = click.prompt("""
-What next?
-
-Y: confirm and save to disk
-n: abort completely
-
-""", type=click.Choice(["Y", "n",])
-)
-    if r == "Y":
-        return True, None
-    elif r == "n":
-        click.Abort()
+    click.confirm("Confirm and save to disk?", abort=True, default=True)
 
 def save_results_locally(
     curve_data_: list[float],
@@ -248,19 +223,13 @@ def led_calibration(min_intensity, max_intensity):
 
         introduction()
         name, channel = get_metadata_from_user()
-        setup_HDC_instructions()
+        setup_probe_instructions()
 
         # retrieve readings from the light probe and list of led intensities 
         lightprobe_readings, led_intensities = start_recording(channel, min_intensity, max_intensity)
 
-        degree = 1
-        while True: #only to change degree
-            curve, curve_type = calculate_curve_of_best_fit(lightprobe_readings, led_intensities, degree)
-            okay_with_result, degree = show_results_and_confirm_with_user(
-                curve, curve_type, lightprobe_readings, led_intensities
-            )
-            if okay_with_result:
-                break
+        curve, curve_type = calculate_curve_of_best_fit(lightprobe_readings, led_intensities, 1)
+        show_results_and_confirm_with_user(curve, curve_type, lightprobe_readings, led_intensities)
 
         data_blob = save_results_locally(
             curve,
