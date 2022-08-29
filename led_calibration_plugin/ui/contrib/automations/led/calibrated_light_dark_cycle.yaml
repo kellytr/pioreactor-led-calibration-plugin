@@ -1,0 +1,20 @@
+---
+name: Calibrated Light/Dark Cycle
+key: calibrated_light_dark_cycle
+fields:
+  - key: duration
+    default: 60
+    unit: min
+    label: Duration between checks
+  - key: light_intensity
+    default: 100
+    unit: AU
+    label: Light intensity
+  - key: light_duration_hours
+    default: 16
+    unit: h
+    label: Light duration
+  - key: dark_duration_hours
+    default: 8
+    unit: h
+    label: Dark duration

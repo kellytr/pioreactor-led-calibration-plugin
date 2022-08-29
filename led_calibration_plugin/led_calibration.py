@@ -140,6 +140,13 @@ def start_recording(channel, min_intensity, max_intensity):
         click.clear()
         click.echo()
 
+    led_intensity(
+        desired_state={"A": 0, "B": 0, "C": 0, "D": 0},
+        unit=get_unit_name(),
+        experiment=get_latest_testing_experiment_name(),
+        verbose=False,
+    )
+
     return lightprobe_readings, led_intensities_to_test
 
 
