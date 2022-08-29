@@ -7,7 +7,6 @@ fields:
     unit: min
     label: Duration between checks
   - key: light_intensity
-    default: 100
     unit: AU
     label: Light intensity
   - key: light_duration_hours

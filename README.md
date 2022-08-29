@@ -19,4 +19,4 @@ Then run by typing into your command line:
 
 ```
 pio run led_calibration
-```"# pioreactor-led-calibration-plugin"
+```
