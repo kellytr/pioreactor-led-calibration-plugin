@@ -23,7 +23,8 @@ jobs:
       - name: Install
         run: |
           pip install -e .
-          pip install -r requirements/requirements_dev.txt
+          pip install https://github.com/pioreactor/pioreactor/archive/master.zip
+          pip install pytest fake-rpi
 
       - name: Mosquitto MQTT Broker in GitHub Actions
         uses: Namoshek/mosquitto-github-action@v1
@@ -35,7 +36,7 @@ jobs:
            mkdir -p .pioreactor/storage
 
       - name: Run tests
-        run: pytest pioreactor/tests/ -vv --timeout 600 --random-order
+        run: pytest -vv --timeout 600
         env:
           TESTING: 1
           TMPDIR: /tmp/
