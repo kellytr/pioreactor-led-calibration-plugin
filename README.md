@@ -5,9 +5,11 @@
 
 The LED automations available on the Pioreactor are limited: light intensity percentages are based on the power supplied to the LED wires. For specific research and for comparing results between Pioreactors, this plugin can be used to determine the exact LED intensity values.
 
-This plugin offers the ability to calibrate your LEDs using an **external light probe**. It functions in two parts: 1) a command line calibration that creates a line-of-best-fit and 2) a calibrated light/dark cycle automation available on the Pioreactor web interface. 
+This plugin offers the ability to calibrate your LEDs using an **external light probe**. It functions in two parts: 
+1) a command line calibration that creates a line-of-best-fit and 
+2) a calibrated light/dark cycle automation available on the Pioreactor web interface. 
 
-## Installation and use instructions
+## Installation instructions
 
 Install from the command line.
 
@@ -21,7 +23,9 @@ pios install-plugin led-calibration-plugin ## to install on all Pioreactors in a
 
 This plugin is also available on the Pioreactor web interface, in the _Plugins_ tab. Downloading from the web interface will install on all Pioreactors in a cluster.
 
-Then run the calbration by typing into your command line:
+## Run your calibration
+
+Type into your command line:
 
 ```
 pio run led_calibration
@@ -29,7 +33,11 @@ pio run led_calibration
 
 To perform this calibration, insert your vial containing media into the Pioreactor and submerge your light probe. Follow the prompts on the command line. The plugin will increase the light intensity, and prompt you to record the readings from your light probe. A calibration line of best fit will be generated based on your light probe readings. 
 
-An automation will become available on the web interface. In the _Pioreactors_ tab, under _Manage_, you can _Start_ an _LED automation_. A new option becomes available in the drop-down menu called "Calibrated Light/Dark Cycle". To use this automation, use two LED cables in each of channels C and D, and insert the bulbs into the X2 and X3 pockets on the Pioreactor vial holder. **Calibrations for LEDs in channels "C" and "D" must exist.** Once set up, input your desired light intensity in AU (ex. 1000 AU). The automation will set the percent light intensity such that an output of 1000 AU occurs on both LEDs.
+## Use the calibration on the UI
+
+An automation will become available on the web interface. To use this automation, use two LED cables in each of channels C and D, and insert the bulbs into the X2 and X3 pockets on the Pioreactor vial holder. **Calibrations for LEDs in channels "C" and "D" must exist.**
+
+In the _Pioreactors_ tab, under _Manage_, you can _Start_ an _LED automation_. A new option becomes available in the drop-down menu called "Calibrated Light/Dark Cycle". Input your desired light intensity in AU (ex. 1000 AU). The automation will set the percent light intensity such that an output of 1000 AU occurs on **both** LEDs.
 
 ## Subcommands 
 
