@@ -30,10 +30,13 @@ jobs:
         uses: Namoshek/mosquitto-github-action@v1
         with:
           version: '1.6'
-
+          
       - name: Create dot_pioreactor folder
         run: |
            mkdir -p .pioreactor/storage
+     
+      - name: Get config
+        run: wget https://raw.githubusercontent.com/Pioreactor/pioreactor/master/config.dev.ini
 
       - name: Run tests
         run: pytest -vv
