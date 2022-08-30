@@ -3,9 +3,7 @@
 
 ![CI tests](https://github.com/kellytr/pioreactor-led-calibration-plugin/actions/workflows/ci.yaml/badge.svg)
 
-The LED automations available on the Pioreactor are limited: light intensity percentages are based on the power supplied to the LED wires.
-
-Many experiments may not require an exact LED intensity value, thus percentage intensities are sufficient. However, for specific research and for comparing results between Pioreactors, this plugin can be used to determine the exact LED intensity values.
+The LED automations available on the Pioreactor are limited: light intensity percentages are based on the power supplied to the LED wires. For specific research and for comparing results between Pioreactors, this plugin can be used to determine the exact LED intensity values.
 
 This plugin offers the ability to calibrate your LEDs using an **external light probe**. It functions in two parts: 1) a command line calibration that creates a line-of-best-fit and 2) a calibrated light/dark cycle automation available on the Pioreactor web interface. 
 
@@ -59,7 +57,7 @@ If you would like to change a current calibration to a previous one, use `change
 For example: 
 `pio run led_calibration change_current Algae_B_2021` would replace Algae_B_2022, since only one calibation is active per channel. 
 
-## When to perform an LED calibration? 
+## When to perform an LED calibration
 
 Calibrations should be performed on a case-by-case basis. A new calibration must be performed per channel, and/or for new LED cables, and with any change in media that can alter the light intensity within the vial.  
 
