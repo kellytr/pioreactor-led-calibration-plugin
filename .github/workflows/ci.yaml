@@ -36,7 +36,7 @@ jobs:
            mkdir -p .pioreactor/storage
 
       - name: Run tests
-        run: pytest -vv --timeout 600
+        run: pytest -vv
         env:
           TESTING: 1
           TMPDIR: /tmp/
