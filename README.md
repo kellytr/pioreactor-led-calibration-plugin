@@ -41,7 +41,7 @@ pio run led_calibration <SUBCOMMAND>
 ```
 The following subcommands are available:
 
-##### list
+#### list
 Prints a table with all existing calibrations stored on the leader. Headings include unique names, timestamps, and channels.
 
 | Name | Timetamp | Channel |
@@ -50,10 +50,10 @@ Prints a table with all existing calibrations stored on the leader. Headings inc
 | Algae_B_2022 | 2022-08-29T20:13:00.400000Z | B |
 | Algae_B_2021 | 2021-08-29T20:15:00.400000Z | B |
 
-##### display_current
+#### display_current
 Displays the graph and data for the current calibration for each channel A, B, C, and D, if it exists. For example, for the data above, the current calibrations for Algae_C_2022 and Algae_B_2022 will be displayed. 
 
-##### change_current
+#### change_current
 If you would like to change a current calibration to a previous one, use `change_current <UNIQUE NAME>`. These changes are based on the channel assigned to the calibration. 
 
 For example: 
