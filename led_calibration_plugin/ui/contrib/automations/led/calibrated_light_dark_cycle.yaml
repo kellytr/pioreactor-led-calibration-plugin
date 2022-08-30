@@ -1,6 +1,6 @@
 ---
-name: Calibrated Light/Dark Cycle
-key: calibrated_light_dark_cycle
+display_name: Calibrated Light/Dark Cycle
+automation_name: calibrated_light_dark_cycle
 fields:
   - key: duration
     default: 60

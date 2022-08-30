@@ -1,1 +1,1 @@
-recursive-include led_calibration_plugin/ui/ *.yaml
+recursive-include led_calibration_plugin/ui *.yaml

@@ -7,7 +7,7 @@ from setuptools import setup
 
 setup(
     name="led_calibration_plugin",
-    version="1.0.2",
+    version="1.0.5",
     license="MIT",
     description="Calibrate your LEDs using an external light probe.",
     long_description=open("README.md").read(),
