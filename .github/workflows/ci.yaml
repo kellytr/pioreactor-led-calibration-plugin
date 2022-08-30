@@ -23,7 +23,7 @@ jobs:
       - name: Install
         run: |
           pip install -e .
-          pip install https://github.com/pioreactor/pioreactor/archive/master.zip
+          pip install -e git+https://github.com/pioreactor/pioreactor.git#egg=project[worker]
           pip install pytest fake-rpi
 
       - name: Mosquitto MQTT Broker in GitHub Actions
