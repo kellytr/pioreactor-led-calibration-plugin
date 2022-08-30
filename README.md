@@ -1,7 +1,7 @@
 
 ## Pioreactor LED calibration plugin
 
-![CI tests](https://github.com/kellytr/pioreactor-led-calibration-plugin/actions/workflows/ci.yaml/badge.svg?branch=feature-1)
+![CI tests](https://github.com/kellytr/pioreactor-led-calibration-plugin/actions/workflows/ci.yaml/badge.svg)
 
 This plugin offers the ability to calibrate your LEDs using an external light probe.
 
