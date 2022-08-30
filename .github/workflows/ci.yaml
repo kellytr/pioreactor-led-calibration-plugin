@@ -39,7 +39,7 @@ jobs:
         run: wget https://raw.githubusercontent.com/Pioreactor/pioreactor/master/config.dev.ini
 
       - name: Run tests
-        run: pytest -vv
+        run: pytest -vv led_calibration_plugin/test_led_calibration.py
         env:
           TESTING: 1
           TMPDIR: /tmp/
