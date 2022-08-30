@@ -1,6 +1,8 @@
 
 ## Pioreactor LED calibration plugin
 
+![CI tests](https://github.com/kellytr/pioreactor-led-calibration-plugin/actions/workflows/ci.yaml/badge.svg?branch=feature-1)
+
 This plugin offers the ability to calibrate your LEDs using an external light probe.
 
 To perform this calibration, insert your vial containing media into the Pioreactor and submerge your light probe. The plugin will increase the light intensity, and prompt you to record the readings from your light probe. A calibration line of best fit will be generated based on your light probe readings.
