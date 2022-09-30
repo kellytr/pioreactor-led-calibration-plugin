@@ -3,8 +3,10 @@ from __future__ import annotations
 
 import time
 
+import pytest
 from msgspec.json import encode
 from pioreactor.background_jobs.led_control import LEDController
+from pioreactor.exc import CalibrationError
 from pioreactor.utils import local_intermittent_storage
 from pioreactor.utils import local_persistant_storage
 from pioreactor.utils.timing import current_utc_timestamp
@@ -16,6 +18,29 @@ from .led_calibration import LEDCalibration
 def pause(n=1) -> None:
     # to avoid race conditions when updating state
     time.sleep(n * 0.5)
+
+
+def test_led_fails_if_calibration_not_present():
+    experiment = "test_led_fails_if_calibration_not_present"
+    unit = get_unit_name()
+
+    with local_persistant_storage("led_calibrations") as cache:
+        del cache["C"]
+        del cache["D"]
+
+    with pytest.raises(CalibrationError):
+
+        with LEDController(
+            "calibrated_light_dark_cycle",
+            duration=0.01,
+            light_intensity=-1,
+            light_duration_hours=16,
+            dark_duration_hours=8,
+            unit=unit,
+            experiment=experiment,
+        ):
+
+            pause(8)
 
 
 def test_set_intensity_au_above_max() -> None:

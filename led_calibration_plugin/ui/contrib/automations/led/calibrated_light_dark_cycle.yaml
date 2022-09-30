@@ -1,6 +1,8 @@
 ---
 display_name: Calibrated Light/Dark Cycle
 automation_name: calibrated_light_dark_cycle
+source: led_calibration_plugin
+description: Turns on a 16h:8h light/dark cycle based on LED calibrations.
 fields:
   - key: duration
     default: 60

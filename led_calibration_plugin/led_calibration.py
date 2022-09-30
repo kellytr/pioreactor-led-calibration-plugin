@@ -105,9 +105,9 @@ def start_recording(channel, min_intensity, max_intensity):
     lightprobe_readings: list[float] = []
     led_intensities_to_test = [
         min_intensity,
-        min_intensity * 5,
-        min_intensity * 10,
-        min_intensity * 15,
+        min_intensity * 5.0,
+        min_intensity * 10.0,
+        min_intensity * 15.0,
     ] + [max_intensity * 0.85, max_intensity * 0.90, max_intensity * 0.95, max_intensity]
 
     for i, intensity in enumerate(led_intensities_to_test):
@@ -260,22 +260,25 @@ def display_current() -> None:
     from pprint import pprint
 
     with local_persistant_storage("current_led_calibration") as c:
-        for channel in c.keys():
-            data_blob = decode(c[channel])
-            lightprobe_readings = data_blob["lightprobe_readings"]
-            led_intensities = data_blob["led_intensities"]
-            name, channel = data_blob["name"], data_blob["channel"]
-            plot_data(
-                led_intensities,
-                lightprobe_readings,
-                title=f"{name}, channel {channel}",
-                highlight_recent_point=False,
-            )  # TODO: add interpolation curve
-            click.echo(click.style(f"Data for {name}", underline=True, bold=True))
-            pprint(data_blob)
-            click.echo()
-            click.echo()
-            click.echo()
+        if c.keys():
+            for channel in c.keys():
+                data_blob = decode(c[channel])
+                lightprobe_readings = data_blob["lightprobe_readings"]
+                led_intensities = data_blob["led_intensities"]
+                name, channel = data_blob["name"], data_blob["channel"]
+                plot_data(
+                    led_intensities,
+                    lightprobe_readings,
+                    title=f"{name}, channel {channel}",
+                    highlight_recent_point=False,
+                )  # TODO: add interpolation curve
+                click.echo(click.style(f"Data for {name}", underline=True, bold=True))
+                pprint(data_blob)
+                click.echo()
+                click.echo()
+                click.echo()
+        else:
+            click.echo("No calibrations exist. Please calibrate and try again.")
 
 
 def change_current(name) -> None:
@@ -290,7 +293,7 @@ def change_current(name) -> None:
         click.echo(f"Swapped {name_being_bumped} for {name} ✅")
     except Exception:
         click.echo("Failed to swap.")
-        click.Abort()
+        raise click.Abort()
 
 
 def list_():
@@ -320,7 +323,7 @@ def click_led_calibration(ctx, min_intensity, max_intensity):
     """
     if ctx.invoked_subcommand is None:
         if min_intensity is None and max_intensity is None:
-            min_intensity, max_intensity = 1, 100
+            min_intensity, max_intensity = 1.0, 100.0
         elif (min_intensity is not None) and (max_intensity is not None):
             assert min_intensity < max_intensity, "min_intensity >= max_intensity"
         else:
