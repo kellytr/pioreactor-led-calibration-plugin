@@ -53,6 +53,14 @@ class CalibratedLightDarkCycle(LEDAutomationJobContrib):
         self.hours_online += 1
         return self.trigger_leds(self.hours_online)
 
+    def calculate_intensity_percent(self, channel):
+        with local_persistant_storage("current_led_calibration") as cache:
+            led_calibration = decode(cache[channel], type=LEDCalibration)
+
+            intensity_percent = (self.light_intensity - led_calibration.curve_data_[1]) / led_calibration.curve_data_[0]
+
+            return clamp(0, intensity_percent, 100)
+
     def trigger_leds(self, hours: int) -> events.AutomationEvent:
 
         cycle_duration = self.light_duration_hours + self.dark_duration_hours
@@ -61,14 +69,8 @@ class CalibratedLightDarkCycle(LEDAutomationJobContrib):
             self.light_active = True
 
             for channel in self.channels:
-                with local_persistant_storage("current_led_calibration") as cache:
-                    led_calibration = decode(cache[channel], type=LEDCalibration)
-
-                    intensity_percent = (
-                        self.light_intensity - led_calibration.curve_data_[1]
-                    ) / led_calibration.curve_data_[0]
-
-                    self.set_led_intensity(channel, clamp(0, intensity_percent, 100))
+                intensity_percent = self.calculate_intensity_percent(channel)
+                self.set_led_intensity(channel, intensity_percent)
 
             return events.ChangedLedIntensity(f"{hours}h: turned on LEDs.")
 
@@ -101,14 +103,8 @@ class CalibratedLightDarkCycle(LEDAutomationJobContrib):
             # update now!
 
             for channel in self.channels:
-                with local_persistant_storage("current_led_calibration") as cache:
-                    led_calibration = decode(cache[channel], type=LEDCalibration)
-
-                    intensity_percent = (
-                        intensity_au - led_calibration.curve_data_[1]
-                    ) / led_calibration.curve_data_[0]
-
-                    self.set_led_intensity(channel, clamp(0, intensity_percent, 100))
+                intensity_percent = self.calculate_intensity_percent(channel)
+                self.set_led_intensity(channel, intensity_percent)
         else:
             pass
 
